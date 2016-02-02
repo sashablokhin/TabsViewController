@@ -40,6 +40,42 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    
+    override func viewDidAppear(animated: Bool) {
+        let vc1 = viewControllerWithColorAndTitle(UIColor.orangeColor(), title: "")
+        let vc2 = viewControllerWithColorAndTitle(UIColor.brownColor(), title: "")
+        let vc3 = viewControllerWithColorAndTitle(UIColor.greenColor(), title: "")
+        let vc4 = viewControllerWithColorAndTitle(UIColor.blueColor(), title: "")
+        
+        
+        let tabsViewController = TabsViewController (
+            parent: self,
+            contentViewControllers: [vc1, vc2, vc3, vc4],
+            titles: ["First", "Second", "Third", "Forth"])
+        
+        view.addSubview(tabsViewController.view)
+        
+        //tabsViewController.sliderView.appearance.outerPadding = 0
+        //tabsViewController.sliderView.appearance.innerPadding = 50
+        //tabsViewController.setCurrentViewControllerAtIndex(0)
+    }
+    
+    func viewControllerWithColorAndTitle(color: UIColor, title: String) -> UIViewController {
+        let viewController = UIViewController()
+        
+        viewController.view.backgroundColor = color
+        
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.textAlignment = .Center
+        titleLabel.font = UIFont.systemFontOfSize(25)
+        titleLabel.sizeToFit()
+        titleLabel.center = view.center
+        
+        viewController.view.addSubview(titleLabel)
+        
+        return viewController
+    }
 
 }
 

@@ -12,6 +12,8 @@
 		AB786B3A1C60C400009910F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB786B381C60C400009910F1 /* Main.storyboard */; };
 		AB786B3C1C60C400009910F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB786B3B1C60C400009910F1 /* Assets.xcassets */; };
 		AB786B3F1C60C400009910F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB786B3D1C60C400009910F1 /* LaunchScreen.storyboard */; };
+		AB786B481C60DE0E009910F1 /* TabsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB786B471C60DE0E009910F1 /* TabsViewController.swift */; };
+		AB786B4A1C60E00C009910F1 /* TabsScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB786B491C60E00C009910F1 /* TabsScrollView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		AB786B3B1C60C400009910F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB786B3E1C60C400009910F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB786B401C60C400009910F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB786B471C60DE0E009910F1 /* TabsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabsViewController.swift; sourceTree = "<group>"; };
+		AB786B491C60E00C009910F1 /* TabsScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabsScrollView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +58,7 @@
 		AB786B331C60C400009910F1 /* TabsViewController */ = {
 			isa = PBXGroup;
 			children = (
+				AB786B461C60DDE3009910F1 /* TabsViewController */,
 				AB786B341C60C400009910F1 /* AppDelegate.swift */,
 				AB786B361C60C400009910F1 /* ViewController.swift */,
 				AB786B381C60C400009910F1 /* Main.storyboard */,
@@ -62,6 +67,15 @@
 				AB786B401C60C400009910F1 /* Info.plist */,
 			);
 			path = TabsViewController;
+			sourceTree = "<group>";
+		};
+		AB786B461C60DDE3009910F1 /* TabsViewController */ = {
+			isa = PBXGroup;
+			children = (
+				AB786B471C60DE0E009910F1 /* TabsViewController.swift */,
+				AB786B491C60E00C009910F1 /* TabsScrollView.swift */,
+			);
+			name = TabsViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,6 +151,8 @@
 			files = (
 				AB786B371C60C400009910F1 /* ViewController.swift in Sources */,
 				AB786B351C60C400009910F1 /* AppDelegate.swift in Sources */,
+				AB786B481C60DE0E009910F1 /* TabsViewController.swift in Sources */,
+				AB786B4A1C60E00C009910F1 /* TabsScrollView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
