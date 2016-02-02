@@ -8,16 +8,15 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, TabsViewControllerDelegate {
+    
+    let titleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let titleLabel = UILabel()
-        titleLabel.text = "Главная"
         titleLabel.textColor = UIColor.whiteColor()
-        //titleLabel.font = UIFont(name: "System", size: 17)!
-        titleLabel.sizeToFit()
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         
         let searchButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
@@ -42,22 +41,35 @@ class ViewController: UIViewController {
 
     
     override func viewDidAppear(animated: Bool) {
-        let vc1 = viewControllerWithColorAndTitle(UIColor.orangeColor(), title: "")
-        let vc2 = viewControllerWithColorAndTitle(UIColor.brownColor(), title: "")
-        let vc3 = viewControllerWithColorAndTitle(UIColor.greenColor(), title: "")
-        let vc4 = viewControllerWithColorAndTitle(UIColor.blueColor(), title: "")
+        let tab1 = TabItem()
+        tab1.image = UIImage(named: "home_black")
+        tab1.title = "Главная"
+        tab1.viewController = viewControllerWithColorAndTitle(UIColor.orangeColor(), title: "")
         
+        let tab2 = TabItem()
+        tab2.image = UIImage(named: "fire_black")
+        tab2.title = "Популярное"
+        tab2.viewController = viewControllerWithColorAndTitle(UIColor.brownColor(), title: "")
         
-        let tabsViewController = TabsViewController (
-            parent: self,
-            contentViewControllers: [vc1, vc2, vc3, vc4],
-            titles: ["First", "Second", "Third", "Forth"])
+        let tab3 = TabItem()
+        tab3.image = UIImage(named: "play_black")
+        tab3.title = "Подписки"
+        tab3.viewController = viewControllerWithColorAndTitle(UIColor.greenColor(), title: "")
+        
+        let tab4 = TabItem()
+        tab4.image = UIImage(named: "user_black")
+        tab4.title = "Аккаунт"
+        tab4.viewController = viewControllerWithColorAndTitle(UIColor.blueColor(), title: "")
+        
+        let tabsViewController = TabsViewController(parent: self, tabs: [tab1, tab2, tab3, tab4])
+        tabsViewController.delegate = self
         
         view.addSubview(tabsViewController.view)
         
         //tabsViewController.sliderView.appearance.outerPadding = 0
         //tabsViewController.sliderView.appearance.innerPadding = 50
-        //tabsViewController.setCurrentViewControllerAtIndex(0)
+        
+        tabsViewController.setCurrentViewControllerAtIndex(0)
     }
     
     func viewControllerWithColorAndTitle(color: UIColor, title: String) -> UIViewController {
@@ -76,6 +88,21 @@ class ViewController: UIViewController {
         
         return viewController
     }
+    
+    // MARK: - TabsViewControllerDelegate
+    
+    func tabsViewControllerDidMoveToTab(tabsViewController: TabsViewController, tab: TabItem, atIndex: Int) {
+        titleLabel.text = tab.title
+        titleLabel.sizeToFit()
+    }
 
 }
+
+
+
+
+
+
+
+
 
