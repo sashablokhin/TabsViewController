@@ -114,7 +114,9 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
     // MARK: - UIScrollViewDelegate
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView.panGestureRecognizer.state == .Began {
+        let panState = scrollView.panGestureRecognizer.state
+        
+        if panState == .Began {
             tabsScrollView.shouldSlide = true
         }
         
@@ -126,6 +128,11 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
         
         if tabsScrollView.contentSize.width > tabsScrollView.frame.size.width && tabsScrollView.shouldSlide == true {
             tabsScrollView.contentOffset = CGPoint (x: sliderW * ratio, y: 0)
+        }
+        
+        if scrollView.tracking || scrollView.dragging || scrollView.decelerating  {
+            let selectorW = tabsScrollView.contentSize.width  - tabsScrollView.selector.frame.width
+            tabsScrollView.selector.frame.origin.x = selectorW * ratio
         }
     }
     

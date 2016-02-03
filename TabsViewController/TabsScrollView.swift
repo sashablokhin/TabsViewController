@@ -131,7 +131,7 @@ class TabsScrollView: UIScrollView, UIScrollViewDelegate {
                 
                 // Set selector
                 
-                UIView.animateWithDuration(0.1, animations: {
+                UIView.animateWithDuration(0.3, animations: {
                     [unowned self] in
                     self.selector.frame = CGRect (
                         x: button.frame.origin.x,
