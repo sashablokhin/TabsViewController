@@ -9,7 +9,8 @@
 import UIKit
 
 class TabItem: NSObject {
-    var image: UIImage?
+    var imageNormal: UIImage?
+    var imageActive: UIImage?
     var title: String?
     var viewController: UIViewController!
 }
@@ -22,6 +23,8 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
     
     var tabs: [TabItem]!
     var contentScrollView: UIScrollView!
+    
+    var tabsScrollView: TabsScrollView!
     
     var delegate: TabsViewControllerDelegate?
 
@@ -49,6 +52,10 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
         
         // Setup views
         
+        tabsScrollView = TabsScrollView(width: view.frame.width, tabs: tabs)
+        tabsScrollView.frame.origin.y = parent.topLayoutGuide.length
+        //tabsScrollView.sliderDelegate = self
+        
         contentScrollView = UIScrollView(frame: view.frame)
         contentScrollView.showsHorizontalScrollIndicator = false
         contentScrollView.showsVerticalScrollIndicator = false
@@ -58,6 +65,7 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
         contentScrollView.delegate = self
         
         view.addSubview(contentScrollView)
+        view.addSubview(tabsScrollView)
         
         // Add child view controllers
         
@@ -88,11 +96,21 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
         addChildViewController(viewController)
         viewController.didMoveToParentViewController(self)
         
-        //delegate?.tabsViewControllerDidMoveToViewController? (self, viewController: viewController, atIndex: index)
         delegate?.tabsViewControllerDidMoveToTab!(self, tab: tabs[index], atIndex: index)
         
-        //sliderView.selectItemAtIndex(index)
+        //tabsScrollView.selectItemAtIndex(index)
         contentScrollView.setContentOffset(CGPoint (x: contentScrollView.frame.width * CGFloat(index), y: 0), animated: true)
+    }
+    
+    // MARK: - UIScrollViewDelegate
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        let index = scrollView.contentOffset.x / contentScrollView.frame.width
+        setCurrentViewControllerAtIndex(Int(index))
     }
 
 }

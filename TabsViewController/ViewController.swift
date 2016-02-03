@@ -17,6 +17,8 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         
         titleLabel.textColor = UIColor.whiteColor()
         
+        hideBottomBorder()
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         
         let searchButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
@@ -33,6 +35,15 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         
         navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: menuButton), UIBarButtonItem(customView: searchButton)]
     }
+    
+    // Remove the border ImageView from the NavigationBar background
+    func hideBottomBorder() {
+        for view in (navigationController?.navigationBar.subviews.filter({ NSStringFromClass($0.dynamicType) == "_UINavigationBarBackground" }))! as [UIView] {
+            if let imageView = view.subviews.filter({ $0 is UIImageView }).first as? UIImageView {
+                imageView.removeFromSuperview()
+            }
+        }
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -42,22 +53,26 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
     
     override func viewDidAppear(animated: Bool) {
         let tab1 = TabItem()
-        tab1.image = UIImage(named: "home_black")
+        tab1.imageNormal = UIImage(named: "home_black")
+        tab1.imageActive = UIImage(named: "home_white")
         tab1.title = "Главная"
         tab1.viewController = viewControllerWithColorAndTitle(UIColor.orangeColor(), title: "")
         
         let tab2 = TabItem()
-        tab2.image = UIImage(named: "fire_black")
+        tab2.imageNormal = UIImage(named: "fire_black")
+        tab2.imageActive = UIImage(named: "fire_white")
         tab2.title = "Популярное"
         tab2.viewController = viewControllerWithColorAndTitle(UIColor.brownColor(), title: "")
         
         let tab3 = TabItem()
-        tab3.image = UIImage(named: "play_black")
+        tab3.imageNormal = UIImage(named: "play_black")
+        tab3.imageActive = UIImage(named: "play_white")
         tab3.title = "Подписки"
         tab3.viewController = viewControllerWithColorAndTitle(UIColor.greenColor(), title: "")
         
         let tab4 = TabItem()
-        tab4.image = UIImage(named: "user_black")
+        tab4.imageNormal = UIImage(named: "user_black")
+        tab4.imageActive = UIImage(named: "user_white")
         tab4.title = "Аккаунт"
         tab4.viewController = viewControllerWithColorAndTitle(UIColor.blueColor(), title: "")
         
@@ -66,8 +81,8 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         
         view.addSubview(tabsViewController.view)
         
-        //tabsViewController.sliderView.appearance.outerPadding = 0
-        //tabsViewController.sliderView.appearance.innerPadding = 50
+        tabsViewController.tabsScrollView.appearance.outerPadding = 0
+        tabsViewController.tabsScrollView.appearance.innerPadding = 50
         
         tabsViewController.setCurrentViewControllerAtIndex(0)
     }
