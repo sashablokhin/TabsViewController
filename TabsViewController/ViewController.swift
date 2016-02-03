@@ -56,25 +56,25 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         tab1.imageNormal = UIImage(named: "home_black")
         tab1.imageActive = UIImage(named: "home_white")
         tab1.title = "Главная"
-        tab1.viewController = viewControllerWithColorAndTitle(UIColor.orangeColor(), title: "")
+        tab1.viewController = viewControllerWithColor(UIColor.orangeColor())
         
         let tab2 = TabItem()
         tab2.imageNormal = UIImage(named: "fire_black")
         tab2.imageActive = UIImage(named: "fire_white")
         tab2.title = "Популярное"
-        tab2.viewController = viewControllerWithColorAndTitle(UIColor.brownColor(), title: "")
+        tab2.viewController = viewControllerWithColor(UIColor.brownColor().colorWithAlphaComponent(0.8))
         
         let tab3 = TabItem()
         tab3.imageNormal = UIImage(named: "play_black")
         tab3.imageActive = UIImage(named: "play_white")
         tab3.title = "Подписки"
-        tab3.viewController = viewControllerWithColorAndTitle(UIColor.greenColor(), title: "")
+        tab3.viewController = viewControllerWithColor(UIColor.greenColor().colorWithAlphaComponent(0.5))
         
         let tab4 = TabItem()
         tab4.imageNormal = UIImage(named: "user_black")
         tab4.imageActive = UIImage(named: "user_white")
         tab4.title = "Аккаунт"
-        tab4.viewController = viewControllerWithColorAndTitle(UIColor.blueColor(), title: "")
+        tab4.viewController = viewControllerWithColor(UIColor.blueColor().colorWithAlphaComponent(0.5))
         
         let tabsViewController = TabsViewController(parent: self, tabs: [tab1, tab2, tab3, tab4])
         tabsViewController.delegate = self
@@ -82,24 +82,15 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         view.addSubview(tabsViewController.view)
         
         tabsViewController.tabsScrollView.appearance.outerPadding = 0
-        tabsViewController.tabsScrollView.appearance.innerPadding = 50
+        tabsViewController.tabsScrollView.appearance.innerPadding = view.frame.width / 8 //50
         
         tabsViewController.setCurrentViewControllerAtIndex(0)
     }
     
-    func viewControllerWithColorAndTitle(color: UIColor, title: String) -> UIViewController {
+    func viewControllerWithColor(color: UIColor) -> UIViewController {
         let viewController = UIViewController()
         
         viewController.view.backgroundColor = color
-        
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.textAlignment = .Center
-        titleLabel.font = UIFont.systemFontOfSize(25)
-        titleLabel.sizeToFit()
-        titleLabel.center = view.center
-        
-        viewController.view.addSubview(titleLabel)
         
         return viewController
     }

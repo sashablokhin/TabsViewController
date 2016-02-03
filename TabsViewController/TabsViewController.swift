@@ -19,7 +19,7 @@ class TabItem: NSObject {
     optional func tabsViewControllerDidMoveToTab(tabsViewController: TabsViewController, tab: TabItem, atIndex: Int)
 }
 
-class TabsViewController: UIViewController, UIScrollViewDelegate {
+class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollViewDelegate {
     
     var tabs: [TabItem]!
     var contentScrollView: UIScrollView!
@@ -54,7 +54,7 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
         
         tabsScrollView = TabsScrollView(width: view.frame.width, tabs: tabs)
         tabsScrollView.frame.origin.y = parent.topLayoutGuide.length
-        //tabsScrollView.sliderDelegate = self
+        tabsScrollView.tabsDelegate = self
         
         contentScrollView = UIScrollView(frame: view.frame)
         contentScrollView.showsHorizontalScrollIndicator = false
@@ -98,21 +98,41 @@ class TabsViewController: UIViewController, UIScrollViewDelegate {
         
         delegate?.tabsViewControllerDidMoveToTab!(self, tab: tabs[index], atIndex: index)
         
-        //tabsScrollView.selectItemAtIndex(index)
+        tabsScrollView.selectItemAtIndex(index)
         contentScrollView.setContentOffset(CGPoint (x: contentScrollView.frame.width * CGFloat(index), y: 0), animated: true)
     }
+    
+    
+    // MARK: TabsScrollViewDelegate
+    
+    func tabsScrollViewDidPressed(tabsScrollView: TabsScrollView, atIndex: Int) {
+        //tabsScrollView.shouldSlide = false
+        setCurrentViewControllerAtIndex(atIndex)
+    }
+    
     
     // MARK: - UIScrollViewDelegate
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        if scrollView.panGestureRecognizer.state == .Began {
+            tabsScrollView.shouldSlide = true
+        }
         
+        let contentW = contentScrollView.contentSize.width - contentScrollView.frame.size.width
+        let sliderW = tabsScrollView.contentSize.width - tabsScrollView.frame.size.width
+        
+        let current = contentScrollView.contentOffset.x
+        let ratio = current / contentW
+        
+        if tabsScrollView.contentSize.width > tabsScrollView.frame.size.width && tabsScrollView.shouldSlide == true {
+            tabsScrollView.contentOffset = CGPoint (x: sliderW * ratio, y: 0)
+        }
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         let index = scrollView.contentOffset.x / contentScrollView.frame.width
         setCurrentViewControllerAtIndex(Int(index))
     }
-
 }
 
 

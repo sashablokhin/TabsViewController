@@ -9,14 +9,7 @@
 import UIKit
 
 struct TabsScrollViewAppearance {
-    
     var backgroundColor: UIColor
-    
-    var font: UIFont
-    var selectedFont: UIFont
-    
-    var textColor: UIColor
-    var selectedTextColor: UIColor
     
     var outerPadding: CGFloat
     var innerPadding: CGFloat
@@ -26,20 +19,29 @@ struct TabsScrollViewAppearance {
 }
 
 
+protocol TabsScrollViewDelegate {
+    func tabsScrollViewDidPressed(tabsScrollView: TabsScrollView, atIndex: Int)
+}
+
+
 class TabsScrollView: UIScrollView, UIScrollViewDelegate {
     var appearance: TabsScrollViewAppearance! {
         didSet {
             draw()
         }
     }
+    
+    var shouldSlide: Bool = true
 
-    let sliderHeight: CGFloat = 44
+    let sliderHeight: CGFloat = 50
     
     var tabs: [TabItem]!
     
     var selector: UIView!
     
     var tabButtons: [UIButton] = []
+    
+    var tabsDelegate: TabsScrollViewDelegate?
     
     init(width: CGFloat, tabs: [TabItem]) {
         super.init(frame: CGRect (x: 0, y: 0, width: width, height: sliderHeight))
@@ -52,16 +54,11 @@ class TabsScrollView: UIScrollView, UIScrollViewDelegate {
         
         appearance = TabsScrollViewAppearance(
             backgroundColor: UIColor.redColor(),
-            font: UIFont.systemFontOfSize(17),
-            selectedFont: UIFont.systemFontOfSize(17),
-            textColor: UIColor.whiteColor(),
-            selectedTextColor: UIColor.whiteColor(),
             outerPadding: 10,
             innerPadding: 10,
             selectorColor: UIColor.whiteColor(),
             selectorHeight: 4
         )
-        
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,8 +66,6 @@ class TabsScrollView: UIScrollView, UIScrollViewDelegate {
     }
     
     func draw() {
-        // clean
-        
         if tabButtons.count > 0 {
             for button in tabButtons {
                 
@@ -111,12 +106,44 @@ class TabsScrollView: UIScrollView, UIScrollViewDelegate {
     
     func buttonBy(tab: TabItem) -> UIButton {
         let button = UIButton()
-        button.frame.size.height = 20
+        button.frame.size.height = 23
         button.frame.size.width += appearance.innerPadding * 2
         button.setImage(tab.imageNormal, forState: UIControlState.Normal)
-        button.setImage(tab.imageActive, forState: UIControlState.Highlighted)
+        button.setImage(tab.imageActive, forState: UIControlState.Selected)
+        button.addTarget(self, action: "buttonPressed:", forControlEvents: UIControlEvents.TouchUpInside)
         
         return button
+    }
+    
+    func buttonPressed(button: UIButton) {
+        tabsDelegate?.tabsScrollViewDidPressed(self, atIndex: button.tag)
+    }
+    
+    // MARK: Menu
+    
+    func selectItemAtIndex (index: Int) {
+        for i in 0..<tabButtons.count {
+            let button = tabButtons[i]
+            
+            if i == index {
+                button.selected = true
+                //button.frame.size.width += appearance.innerPadding * 2
+                
+                // Set selector
+                
+                UIView.animateWithDuration(0.1, animations: {
+                    [unowned self] in
+                    self.selector.frame = CGRect (
+                        x: button.frame.origin.x,
+                        y: self.selector.frame.origin.y,
+                        width: button.frame.size.width,
+                        height: self.appearance.selectorHeight)
+                    })
+            } else {
+                button.selected = false
+                //button.frame.size.width += appearance.innerPadding * 2
+            }
+        }
     }
 }
 
