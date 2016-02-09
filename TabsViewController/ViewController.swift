@@ -8,18 +8,33 @@
 
 import UIKit
 
+var navigationBar: UINavigationBar!
+var tabsViewController: TabsViewController!
+
+
 class ViewController: UIViewController, TabsViewControllerDelegate {
     
     let titleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBarHidden = true
         
         titleLabel.textColor = UIColor.whiteColor()
         
-        hideBottomBorder()
+        navigationBar = UINavigationBar(frame: CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), 64.0))
+        navigationBar.translucent = false
+        navigationBar.barTintColor = UIColor(red: 1, green: 0.0, blue: 0.0, alpha: 1.0)
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
+        let navItem = UINavigationItem()
+        
+        navItem.leftBarButtonItem = UIBarButtonItem(customView: titleLabel)
         
         let searchButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         searchButton.setImage(UIImage(named: "search.png"), forState: UIControlState.Normal)
@@ -33,16 +48,16 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         
         menuButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: -10)
         
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: menuButton), UIBarButtonItem(customView: searchButton)]
+        navItem.rightBarButtonItems = [UIBarButtonItem(customView: menuButton), UIBarButtonItem(customView: searchButton)]
+        
+        navigationBar.setItems([navItem], animated: true)
+        
+        self.view.addSubview(navigationBar)
     }
     
-    // Remove the border ImageView from the NavigationBar background
-    func hideBottomBorder() {
-        for view in (navigationController?.navigationBar.subviews.filter({ NSStringFromClass($0.dynamicType) == "_UINavigationBarBackground" }))! as [UIView] {
-            if let imageView = view.subviews.filter({ $0 is UIImageView }).first as? UIImageView {
-                imageView.removeFromSuperview()
-            }
-        }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
 
     override func didReceiveMemoryWarning() {
@@ -52,6 +67,8 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
 
     
     override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
         let tab1 = TabItem()
         tab1.imageNormal = UIImage(named: "home_black")
         tab1.imageActive = UIImage(named: "home_white")
@@ -62,7 +79,8 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         tab2.imageNormal = UIImage(named: "fire_black")
         tab2.imageActive = UIImage(named: "fire_white")
         tab2.title = "Популярное"
-        tab2.viewController = viewControllerWithColor(UIColor.brownColor().colorWithAlphaComponent(0.8))
+        tab2.viewController = TableViewController()
+        //viewControllerWithColor(UIColor.brownColor().colorWithAlphaComponent(0.8))
         
         let tab3 = TabItem()
         tab3.imageNormal = UIImage(named: "play_black")
@@ -76,14 +94,15 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         tab4.title = "Аккаунт"
         tab4.viewController = viewControllerWithColor(UIColor.blueColor().colorWithAlphaComponent(0.5))
         
-        let tabsViewController = TabsViewController(parent: self, tabs: [tab1, tab2, tab3, tab4])
+        tabsViewController = TabsViewController(parent: self, tabs: [tab1, tab2, tab3, tab4])
+        tabsViewController.view.frame = CGRect(x: 0, y: 64, width: view.frame.width, height: view.frame.height)
         tabsViewController.delegate = self
         
-        view.addSubview(tabsViewController.view)
+        self.view.addSubview(tabsViewController.view)
         
         tabsViewController.tabsScrollView.appearance.outerPadding = 0
         tabsViewController.tabsScrollView.appearance.innerPadding = view.frame.width / 8 //50
-        
+
         tabsViewController.setCurrentViewControllerAtIndex(0)
     }
     
@@ -101,7 +120,6 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         titleLabel.text = tab.title
         titleLabel.sizeToFit()
     }
-
 }
 
 

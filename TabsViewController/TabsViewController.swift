@@ -53,26 +53,28 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
         // Setup views
         
         tabsScrollView = TabsScrollView(width: view.frame.width, tabs: tabs)
-        tabsScrollView.frame.origin.y = parent.topLayoutGuide.length
         tabsScrollView.tabsDelegate = self
         
-        contentScrollView = UIScrollView(frame: view.frame)
+        view.addSubview(tabsScrollView)
+        
+        contentScrollView = UIScrollView(frame: CGRect(x: 0, y: 50, width: view.frame.width, height: view.frame.height))
+        
         contentScrollView.showsHorizontalScrollIndicator = false
         contentScrollView.showsVerticalScrollIndicator = false
         contentScrollView.pagingEnabled = true
         contentScrollView.scrollsToTop = false
         contentScrollView.contentSize.width = contentScrollView.frame.width * CGFloat(tabs.count)
+        
         contentScrollView.delegate = self
         
         view.addSubview(contentScrollView)
-        view.addSubview(tabsScrollView)
         
         // Add child view controllers
         
         var currentX: CGFloat = 0
         
         for tab in tabs {
-            tab.viewController.view.frame = CGRectMake(currentX, parent.topLayoutGuide.length, view.frame.width, view.frame.height - parent.topLayoutGuide.length - parent.bottomLayoutGuide.length)
+            tab.viewController.view.frame = CGRectMake(currentX, 0, view.frame.width, view.frame.height)
             
             contentScrollView.addSubview(tab.viewController.view)
             
