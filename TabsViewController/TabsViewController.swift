@@ -8,6 +8,9 @@
 
 import UIKit
 
+var navigationBar: UINavigationBar!
+var tabsViewController: TabsViewController!
+
 class TabItem: NSObject {
     var imageNormal: UIImage?
     var imageActive: UIImage?
@@ -19,7 +22,17 @@ class TabItem: NSObject {
     optional func tabsViewControllerDidMoveToTab(tabsViewController: TabsViewController, tab: TabItem, atIndex: Int)
 }
 
-class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollViewDelegate {
+@objc protocol HiddenNavigationBarScrollViewDelegate {
+    optional func hiddenNavigationBarScrollViewDidScroll(scrollView: UIScrollView)
+    optional func hiddenNavigationBarScrollViewDidEndDecelerating(scrollView: UIScrollView)
+    optional func hiddenNavigationBarScrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool)
+}
+
+protocol HiddenNavigationBarProtocol {
+    var hiddenNavigationBarDelegate: HiddenNavigationBarScrollViewDelegate? {get set}
+}
+
+class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollViewDelegate, HiddenNavigationBarScrollViewDelegate {
     
     var tabs: [TabItem]!
     var contentScrollView: UIScrollView!
@@ -27,6 +40,8 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
     var tabsScrollView: TabsScrollView!
     
     var delegate: TabsViewControllerDelegate?
+    
+    private var previousYOffset = CGFloat.NaN
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +90,10 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
         
         for tab in tabs {
             tab.viewController.view.frame = CGRectMake(currentX, 0, view.frame.width, view.frame.height)
+            
+            if var vc = tab.viewController as? HiddenNavigationBarProtocol {
+                vc.hiddenNavigationBarDelegate = self
+            }
             
             contentScrollView.addSubview(tab.viewController.view)
             
@@ -141,6 +160,73 @@ class TabsViewController: UIViewController, UIScrollViewDelegate, TabsScrollView
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         let index = scrollView.contentOffset.x / contentScrollView.frame.width
         setCurrentViewControllerAtIndex(Int(index))
+    }
+    
+    
+    
+    // MARK: - HiddenNavigationBarScrollViewDelegate
+    
+    func hiddenNavigationBarScrollViewDidScroll(scrollView: UIScrollView) {
+        var frame = navigationBar.frame
+        let size = frame.size.height - 21
+        let framePercentageHidden = ((-frame.origin.y) / (frame.size.height - 1))
+        let scrollOffset = scrollView.contentOffset.y
+        let scrollDiff = scrollOffset - self.previousYOffset
+        let scrollHeight = scrollView.frame.size.height
+        let scrollContentSizeHeight = scrollView.contentSize.height + scrollView.contentInset.bottom
+        
+        if (scrollOffset <= -scrollView.contentInset.top) {
+            frame.origin.y = 0
+        } else if ((scrollOffset + scrollHeight) >= scrollContentSizeHeight) {
+            frame.origin.y = -size
+        } else {
+            frame.origin.y = min(0, max(-size, frame.origin.y - scrollDiff))
+        }
+        
+        navigationBar.frame = frame
+        navigationBar.setContentAlpha(1 - framePercentageHidden)
+        
+        self.previousYOffset = scrollOffset
+        
+        tabsViewController.view.frame = CGRect(x: frame.origin.x, y: frame.origin.y + frame.height, width: tabsViewController.view.frame.width, height: tabsViewController.view.frame.height)
+    }
+    
+    func hiddenNavigationBarScrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        stoppedScrolling()
+    }
+    
+    func hiddenNavigationBarScrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if (!decelerate) {
+            stoppedScrolling()
+        }
+    }
+    
+    
+    // MARK: - Supporting functions
+    
+    func stoppedScrolling()
+    {
+        let frame = navigationBar.frame
+        if (frame.origin.y < 0) {
+            animateNavBarTo(-(frame.size.height - 21))
+        }
+    }
+    
+    
+    func animateNavBarTo(y: CGFloat)
+    {
+        UIView.animateWithDuration(0.2) { () -> Void in
+            var frame = navigationBar.frame
+            
+            let alpha: CGFloat = (frame.origin.y >= y ? 0 : 1)
+            
+            frame.origin.y = y
+            
+            navigationBar.frame = frame
+            navigationBar.setContentAlpha(alpha)
+            
+            tabsViewController.view.frame = CGRect(x: frame.origin.x, y: frame.origin.y + frame.height, width: tabsViewController.view.frame.width, height: tabsViewController.view.frame.height)
+        }
     }
 }
 

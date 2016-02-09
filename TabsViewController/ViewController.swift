@@ -8,9 +8,6 @@
 
 import UIKit
 
-var navigationBar: UINavigationBar!
-var tabsViewController: TabsViewController!
-
 
 class ViewController: UIViewController, TabsViewControllerDelegate {
     
@@ -79,14 +76,15 @@ class ViewController: UIViewController, TabsViewControllerDelegate {
         tab2.imageNormal = UIImage(named: "fire_black")
         tab2.imageActive = UIImage(named: "fire_white")
         tab2.title = "Популярное"
-        tab2.viewController = TableViewController()
+        tab2.viewController = PopularTableViewController()
         //viewControllerWithColor(UIColor.brownColor().colorWithAlphaComponent(0.8))
         
         let tab3 = TabItem()
         tab3.imageNormal = UIImage(named: "play_black")
         tab3.imageActive = UIImage(named: "play_white")
         tab3.title = "Подписки"
-        tab3.viewController = viewControllerWithColor(UIColor.greenColor().colorWithAlphaComponent(0.5))
+        tab3.viewController = SubscribeTableViewController()
+        //viewControllerWithColor(UIColor.greenColor().colorWithAlphaComponent(0.5))
         
         let tab4 = TabItem()
         tab4.imageNormal = UIImage(named: "user_black")
